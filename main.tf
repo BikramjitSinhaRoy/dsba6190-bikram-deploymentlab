@@ -81,6 +81,13 @@ resource "azurerm_mssql_server" "azsqlserver" {
   tags = local.tags
 }
 
+resource "azurerm_mssql_virtual_network_rule" "vnetrule" {
+  name      = "vnetrule-${var.class_name}${var.student_name}${var.environment}${random_integer.deployment_id_suffix.result}"
+  server_id = azurerm_mssql_server.azsqlserver.id
+  subnet_id = azurerm_subnet.subnet.id
+}
+
+
 resource "azurerm_mssql_database" "azmysqldb" {
   name         = "azmysqldb-${var.class_name}${var.student_name}${var.environment}${random_integer.deployment_id_suffix.result}"
   server_id    = azurerm_mssql_server.azsqlserver.id
@@ -89,9 +96,6 @@ resource "azurerm_mssql_database" "azmysqldb" {
   max_size_gb  = 2
   sku_name     = "Basic"
 
-  tags = {
-    foo = "bar"
-  }
-
+  tags = local.tags
 }
 
